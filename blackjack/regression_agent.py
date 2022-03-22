@@ -9,11 +9,12 @@ import blackjack_player_classes
 import numpy as np
 
 class Regression_Agent(blackjack_player_classes.bot):
-    def __init__(self, name, sample_file):
+    def __init__(self, name, sample_file, collect_samples):
         super().__init__(name)
         self.sample_file = sample_file
-        sampler = blackjack_sample(sample_file, 1000)
-        sampler.generate_samples()
+        if collect_samples:
+            sampler = blackjack_sample(sample_file, 1000)
+            sampler.generate_samples()
         self.train_agent()
 
     def train_agent(self):
@@ -31,11 +32,11 @@ class Regression_Agent(blackjack_player_classes.bot):
         return sum([1 for card in self.hand if card.name == "Ace"])
 
     def turnDecision(self):
-        aces = self.ace_count()
-        score = self.evaluate()
-        decision = self.model.predict(np.array(aces, score))
+        X = pd.DataFrame(columns=['aces', 'hand_value'])
+        X.loc[0] = [self.ace_count(), self.evaluate()]
+        decision = self.model.predict(X)
         print(decision)
-        if decision == 1:
+        if decision >= .5:
             return blackjack_enums.Decision.Hit
         else:
             return blackjack_enums.Decision.Stand

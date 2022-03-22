@@ -45,7 +45,7 @@ class game_setup:
                 bot_name = self.generate_bot_name()
 
             bots.append(blackjack_player_classes.bot(bot_name))
-            bots.append(Regression_Agent("Ringer", 'blackjack-data.json'))
+            bots.append(Regression_Agent("Ringer", 'blackjack-data.json', False))
 
         table = bots + self.users
         random.shuffle(table)
